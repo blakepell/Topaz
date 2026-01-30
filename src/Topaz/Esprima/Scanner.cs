@@ -83,7 +83,8 @@ public sealed class Scanner
         "function",
         "continue",
         "debugger",
-        "instanceof"
+        "instanceof",
+        "foreach"
     };
 
     private static readonly HashSet<string> StrictModeReservedWords = new()

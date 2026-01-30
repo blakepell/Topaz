@@ -3245,6 +3245,85 @@ public sealed class JavaScriptParser
                 : Finalize(node, new ForOfStatement(left, right!, body, @await));
     }
 
+    // C#-style foreach statement: foreach (var item in collection) { }
+    private Statement ParseForEachStatement()
+    {
+        var node = CreateNode();
+        Node? left = null;
+        Expression? right = null;
+
+        ExpectKeyword("foreach");
+        Expect("(");
+
+        // Parse the variable declaration (var, let, or const)
+        if (MatchKeyword("var"))
+        {
+            var initNode = CreateNode();
+            NextToken();
+
+            var previousAllowIn = _context.AllowIn;
+            _context.AllowIn = false;
+            var inFor = true;
+            var declarations = ParseVariableDeclarationList(ref inFor);
+            _context.AllowIn = previousAllowIn;
+
+            if (declarations.Count != 1)
+            {
+                return ThrowError<Statement>(Messages.ForInOfLoopInitializer, "foreach");
+            }
+
+            ExpectKeyword("in");
+            left = Finalize(initNode, new VariableDeclaration(declarations, VariableDeclarationKind.Var));
+            right = ParseExpression();
+        }
+        else if (MatchKeyword("const") || MatchKeyword("let"))
+        {
+            var initNode = CreateNode();
+            var kindString = (string?)NextToken().Value;
+            var kind = ParseVariableDeclarationKind(kindString);
+
+            var previousAllowIn = _context.AllowIn;
+            _context.AllowIn = false;
+            var inFor = true;
+            var declarations = ParseBindingList(kind, inFor);
+            _context.AllowIn = previousAllowIn;
+
+            if (declarations.Count != 1)
+            {
+                return ThrowError<Statement>(Messages.ForInOfLoopInitializer, "foreach");
+            }
+
+            ExpectKeyword("in");
+            left = Finalize(initNode, new VariableDeclaration(declarations, kind));
+            right = ParseExpression();
+        }
+        else
+        {
+            return ThrowUnexpectedToken<Statement>(_lookahead);
+        }
+
+        Statement body;
+        if (!Match(")") && _config.Tolerant)
+        {
+            TolerateUnexpectedToken(NextToken());
+            body = Finalize(CreateNode(), new EmptyStatement());
+        }
+        else
+        {
+            Expect(")");
+
+            TolerateInvalidLoopStatement();
+
+            var previousInIteration = _context.InIteration;
+            _context.InIteration = true;
+            body = IsolateCoverGrammar(parseStatement);
+            _context.InIteration = previousInIteration;
+        }
+
+        // Reuse ForOfStatement since the semantics are the same
+        return Finalize(node, new ForOfStatement(left, right!, body, false));
+    }
+
     // https://tc39.github.io/ecma262/#sec-continue-statement
 
     private ContinueStatement ParseContinueStatement()
@@ -3648,6 +3727,9 @@ public sealed class JavaScriptParser
                         break;
                     case "for":
                         statement = ParseForStatement();
+                        break;
+                    case "foreach":
+                        statement = ParseForEachStatement();
                         break;
                     case "function":
                         statement = ParseFunctionDeclaration();

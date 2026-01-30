@@ -41,6 +41,23 @@ for (const item of items) {
     }
 
     [Test]
+    public void ForEachLoop()
+    {
+        var engine = new TopazEngine();
+        dynamic model = new JsObject();
+        engine.SetValue("model", model);
+        engine.ExecuteScript(@"
+let items = [51, 22, 33]
+foreach (const item in items) {
+    model[item] = item
+}
+");
+        Assert.AreEqual(51, model["51"]);
+        Assert.AreEqual(22, model["22"]);
+        Assert.AreEqual(33, model["33"]);
+    }
+
+    [Test]
     public void ForLoopConstVarDef()
     {
         var engine = new TopazEngine();

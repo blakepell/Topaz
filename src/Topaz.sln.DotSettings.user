@@ -1,0 +1,8 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a1daa20b_002De8fe_002D40f3_002D92f0_002D699901d5313c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ForInLoop" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F89547A1-9041-4BFA-845C-3F1BFA593132::net9.0::Tenray.Topaz.Test.ForLoopsTests.ForInLoop&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F89547A1-9041-4BFA-845C-3F1BFA593132::net9.0::Tenray.Topaz.Test.ForLoopsTests.ForOfLoop&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F89547A1-9041-4BFA-845C-3F1BFA593132::net9.0::Tenray.Topaz.Test.ForLoopsTests.ForEachLoop&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
