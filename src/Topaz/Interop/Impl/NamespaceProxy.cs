@@ -31,7 +31,16 @@ public sealed class NamespaceProxy : ITypeProxy
     /// <summary>
     /// If enabled, sub namespaces are accessible.
     /// </summary>
-    public bool AllowSubNamespaces { get; }
+    public bool AllowSubNamespaces { get; private set; }
+
+    /// <summary>
+    /// Enables sub-namespace access. Can only upgrade from false to true.
+    /// </summary>
+    public void SetAllowSubNamespaces(bool value)
+    {
+        if (value)
+            AllowSubNamespaces = true;
+    }
 
     /// <summary>
     /// ValueConverter to be passed to the created TypeProxy.

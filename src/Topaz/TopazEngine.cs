@@ -107,10 +107,18 @@ public sealed class TopazEngine : ITopazEngine
         var rootNamespace = parts[0];
         if (GlobalScope.GetValue(rootNamespace) is NamespaceProxy existingProxy)
         {
+            // If allowSubNamespaces is requested and the existing proxy doesn't have it, upgrade it
+            if (allowSubNamespaces && !existingProxy.AllowSubNamespaces)
+            {
+                existingProxy.SetAllowSubNamespaces(true);
+            }
             existingProxy.AddSubNameSpaces(parts.AsSpan(1), whitelist, allowSubNamespaces);
             return;
         }
-        var proxy = new NamespaceProxy(rootNamespace, whitelist, allowSubNamespaces && parts.Length == 1, ValueConverter, MemberInfoProvider);
+        // For root namespace, enable AllowSubNamespaces if we're adding a multi-part namespace
+        // This allows accessing other types/namespaces under the root
+        var rootAllowSubNamespaces = allowSubNamespaces || parts.Length > 1;
+        var proxy = new NamespaceProxy(rootNamespace, whitelist, rootAllowSubNamespaces, ValueConverter, MemberInfoProvider);
         GlobalScope.SetValueAndKind(
             rootNamespace,
             proxy,
